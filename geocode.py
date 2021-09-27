@@ -30,7 +30,7 @@ for sheet in workbook.worksheets:
     if coordinatecol = null:
         sheet.insert_cols(8)
         coordinatecol = sheet['H']
-    for cell in addresscol:
+    for row in sheet.iter_rows():
         print(cell.value)
         # convert to coord
         # write to coordinatecol
