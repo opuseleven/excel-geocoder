@@ -3,6 +3,8 @@
 import os
 import sys
 import openpyxl
+import requests
+import json
 
 if len(sys.argv) < 2:
     print('Usage: python3 geocode.py filename.xlsx')
@@ -15,8 +17,17 @@ print(path)
 
 workbook = openpyxl.load_workbook(path)
 
-def geocode(address):
-    coords = ""
+headers = {
+  "apikey": os.getenv('apikey')
+}
+
+def geocode(address,city,state):
+    params = (
+       ("text","%s, %s, %s, United States"% address, city, state),
+    );
+    response = requests.get('https://app.geocodeapi.io/api/v1/search', headers=headers, params=params)
+    parsed_data = json.loads(response.text)
+    coords = parsed_data['features'][0]['geometry']['coordinates']
     return coords
 
 for sheet in workbook.worksheets:
@@ -39,7 +50,7 @@ for sheet in workbook.worksheets:
         # convert to coord
         address = row[addresscol].value
         city = row[citycol].value
-        coordinates = geocode(address)
+        coordinates = geocode(address,city,state)
         row[coordinatecol] = coordinates
 
 # write to coordinatecol
