@@ -2,6 +2,7 @@
 
 import os
 import sys
+from dotenv import load_dotenv
 import openpyxl
 import requests
 import json
@@ -17,15 +18,18 @@ print(path)
 
 workbook = openpyxl.load_workbook(path)
 
+load_dotenv()
+apikey = os.environ.get("APIKEY")
+
 headers = {
-  "apikey": os.getenv('apikey')
+  "apikey": apikey
 }
 
 def geocode(address):
     print(address)
     params = (
        ("text","%s, United States"% address),
-    );
+    )
     response = requests.get('https://app.geocodeapi.io/api/v1/search', headers=headers, params=params)
     parsed_data = json.loads(response.text)
     coords = parsed_data['features'][0]['geometry']['coordinates']
@@ -44,6 +48,7 @@ for sheet in workbook.worksheets:
             addresscol = count
         if cell.value == 'Coordinates':
             coordinatecol = count
+        count += 1
     if addresscol == -1:
         break
     if coordinatecol == -1:
@@ -55,8 +60,10 @@ for sheet in workbook.worksheets:
         address = row[addresscol].value
         if address == 'None':
             coordinates = ' '
+        elif address == ' ':
+            coordinates = ' '
         else:
-            coordinates = geocode(address)
+            coordinates = str(geocode(address))
         print(coordinates)
         row[coordinatecol].value = coordinates
 
