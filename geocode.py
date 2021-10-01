@@ -31,8 +31,11 @@ def geocode(address):
        ("text","%s, United States"% address),
     )
     response = requests.get('https://app.geocodeapi.io/api/v1/search', headers=headers, params=params)
-    parsed_data = json.loads(response.text)
-    coords = parsed_data['features'][0]['geometry']['coordinates']
+    if response.status_code != 200:
+        coords = ' '
+    else:
+        parsed_data = json.loads(response.text)
+        coords = parsed_data['features'][0]['geometry']['coordinates']
     return coords
 
 print("Finding coordinates:")
