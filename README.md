@@ -4,3 +4,6 @@ A python script that takes an excel document as input, recognizes a column label
 Requires a mapbox-gl apikey.
 
 Usage: python3 geocode.py filename.xlsx
+
+# Output to JSON:
+Use the xlsx2json.py script to convert the output from geocode.py to JSON.
