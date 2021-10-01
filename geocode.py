@@ -22,7 +22,7 @@ load_dotenv()
 apikey = os.environ.get("APIKEY")
 
 headers = {
-  "apikey": apikey
+    "apikey": apikey
 }
 
 def geocode(address):
@@ -58,14 +58,10 @@ for sheet in workbook.worksheets:
     for row in sheet.iter_rows(min_row=2):
         # convert to coord
         address = row[addresscol].value
-        if address == 'None':
-            coordinates = ' '
-        elif address == ' ':
-            coordinates = ' '
-        else:
+        if not address.startswith(" "):
             coordinates = str(geocode(address))
-        print(coordinates)
-        row[coordinatecol].value = coordinates
+            print(coordinates)
+            row[coordinatecol].value = coordinates
 
 # write to coordinatecol
 print("Writing file...")
