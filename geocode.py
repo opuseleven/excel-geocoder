@@ -35,7 +35,10 @@ def geocode(address):
         coords = ' '
     else:
         parsed_data = json.loads(response.text)
-        coords = parsed_data['features'][0]['geometry']['coordinates']
+        if len(parsed_data['features']) >= 1:
+            coords = parsed_data['features'][0]['geometry']['coordinates']
+        else:
+            coords = ' '
     return coords
 
 print("Finding coordinates:")
@@ -61,10 +64,11 @@ for sheet in workbook.worksheets:
     for row in sheet.iter_rows(min_row=2):
         # convert to coord
         address = row[addresscol].value
-        if not address.startswith(" "):
-            coordinates = str(geocode(address))
-            print(coordinates)
-            row[coordinatecol].value = coordinates
+        if address:
+            if not address.startswith(" "):
+                coordinates = str(geocode(address))
+                print(coordinates)
+                row[coordinatecol].value = coordinates
 
 # write to coordinatecol
 print("Writing file...")
