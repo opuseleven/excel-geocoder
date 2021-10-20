@@ -8,10 +8,6 @@ if len(sys.argv) < 2:
     print('Usage: python3 xlsx2json.py filename.xlsx')
     sys.exit()
 
-if len(sys.argv) > 3:
-    print('Usage: python3 xlsx2json.py filename.xlsx')
-    sys.exit()
-
 filename = sys.argv[1]
 path = os.path.join(os.getcwd(), filename)
 
@@ -19,7 +15,7 @@ print(path)
 
 workbook = openpyxl.load_workbook(path)
 
-print('Converting to GeoJSON...')
+print('Converting to JSON...')
 
 datalist = []
 
@@ -52,18 +48,13 @@ for sheet in workbook.worksheets:
             if row[coordscol].value:
                 if not row[coordscol].value.startswith(' '):
                     data = OrderedDict()
-                    data['type'] = "Feature"
-                    data['geometry'] = {
-                    "type": "Point",
-                    "coordinates": convertcoords(row[coordscol].value)
-                    }
-                    propsdata = OrderedDict()
                     c = 0
                     while c < len(colnames):
-                        if c != coordscol:
-                            propsdata[colnames[c]] = row[c].value
+                        if c == coordscol:
+                            data[colnames[c]] = convertcoords(row[c].value)
+                        else:
+                            data[colnames[c]] = row[c].value
                         c += 1
-                    data['properties'] = propsdata
                     datalist.append(data)
 
 j = json.dumps(datalist)
