@@ -70,7 +70,7 @@ for sheet in workbook.worksheets:
                 pattern = "\d.+[A-Za-z]+,\s[A-Z]{2}\s\d{5}-?\d{0,4}.*"
                 if re.match(pattern, address):
                     san_pat = "\d.+[A-Za-z]+,\s[A-Z]{2}\s\d{5}-?\d{0,4}"
-                    sanitized_address = re.search(san_pat, address)
+                    sanitized_address = (re.search(san_pat, address)).group(0)
                     coordinates = str(geocode(sanitized_address))
                     print(coordinates)
                     row[coordinatecol].value = coordinates
