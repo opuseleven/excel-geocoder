@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import openpyxl
 import requests
 import json
+import re
 
 if len(sys.argv) < 2:
     print('Usage: python3 geocode.py filename.xlsx')
@@ -66,9 +67,13 @@ for sheet in workbook.worksheets:
         address = row[addresscol].value
         if address:
             if not address.startswith(" "):
-                coordinates = str(geocode(address))
-                print(coordinates)
-                row[coordinatecol].value = coordinates
+                pattern = "\d.+[A-Za-z]+,\s[A-Z]{2}\s\d{5}-?\d{0,4}.*"
+                if re.match(pattern, address):
+                    san_pat = "\d.+[A-Za-z]+,\s[A-Z]{2}\s\d{5}-?\d{0,4}"
+                    sanitized_address = re.search(san_pat, address)
+                    coordinates = str(geocode(sanitized_address))
+                    print(coordinates)
+                    row[coordinatecol].value = coordinates
 
 # write to coordinatecol
 print("Writing file...")
